@@ -189,6 +189,12 @@ resource "tls_private_key" "hashicat" {
   algorithm = "ED25519"
 }
 
+module "s3-bucket" {
+  source              = "cloudposse/s3-bucket/aws"
+  version             = "3.1.0"
+  s3_object_ownership = "BucketOwnerEnforced"
+}
+
 locals {
   private_key_filename = "${var.prefix}-ssh-key.pem"
 }
@@ -196,10 +202,4 @@ locals {
 resource "aws_key_pair" "hashicat" {
   key_name   = local.private_key_filename
   public_key = tls_private_key.hashicat.public_key_openssh
-}
-
-module "s3-bucket" {
-  source              = "cloudposse/s3-bucket/aws"
-  version             = "3.1.0"
-  s3_object_ownership = "BucketOwnerEnforced"
 }
